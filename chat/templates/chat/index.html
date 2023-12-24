@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Room</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- Bootstrap JS and jQuery (required for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+<body style="background-color: #f8f9fa; display: flex; justify-content: center; align-items: center; height: 100vh;">
+
+    <div style="width: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <div id="rules" class="border rounded p-3 mb-2" style="width: 80%;">
+            <h2>Chat Analysis Rules</h2>
+            <p>When you type "analyze" before your message, the chat will analyze the part of speech for each word in your message and color it accordingly:</p>
+            <ul>
+                <li><span style="background-color: #FFB6C1;">Adjective</span></li>
+                <li><span style="background-color: #FFD700;">Adverb</span></li>
+                <li><span style="background-color: #FFA07A;">Conjunction</span></li>
+                <li><span style="background-color: #7FFFD4;">Determiner</span></li>
+                <li><span style="background-color: #87CEFA;">Noun</span></li>
+                <li><span style="background-color: #32CD32;">Number</span></li>
+                <li><span style="background-color: #BA55D3;">Preposition</span></li>
+                <li><span style="background-color: #FF69B4;">Pronoun</span></li>
+                <li><span style="background-color: #FFA500;">Verb</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <div style="width: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <div id="chat-interface" style="width: 80%;">
+            <div id="chat-log-container" class="border rounded p-3 mb-2" style="height: 200px; overflow-y: auto;"></div>
+            <input id="chat-message-input" type="text" class="form-control mb-2" placeholder="Type your message here">
+            <button id="chat-message-submit" class="btn btn-primary">Send</button>
+        </div>
+    </div>
+
+</body>
+
+<script>
+    const chatSocket = new WebSocket(
+        'ws://'
+        + window.location.host
+        + '/ws/chat/'
+    );
+
+    const chatLogContainer = document.querySelector('#chat-log-container');
+
+    chatSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        var message = data['message'];
+        chatLogContainer.innerHTML += (message + '<br>');
+        chatLogContainer.scrollTop = chatLogContainer.scrollHeight; // Scroll to the bottom
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.querySelector('#chat-message-input').focus();
+    document.querySelector('#chat-message-input').onkeyup = function(e) {
+        if (e.keyCode === 13) {  // enter, return
+            document.querySelector('#chat-message-submit').click();
+        }
+    };
+
+    document.querySelector('#chat-message-submit').onclick = function(e) {
+        const messageInputDom = document.querySelector('#chat-message-input');
+        const message = messageInputDom.value;
+        chatSocket.send(JSON.stringify({
+            'message': message
+        }));
+
+        messageInputDom.value = '';
+    };
+
+</script>
+
+</html>
