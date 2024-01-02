@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-o6dgb(+j!l@e1s2lo98j!2pat$9$ku-wrz^)9!riw6irb1ehs3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['54.146.183.54','127.0.0.1','3.80.203.9']
 
 
 # Application definition
@@ -124,7 +124,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-ASGI_APPLICATION = 'chat_project.routing.application'
+ASGI_APPLICATION = 'chat_project.asgi.application'
 
 CHANNEL_LAYERS = {
     'default': {
